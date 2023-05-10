@@ -1,0 +1,55 @@
+import styled from "styled-components";
+
+export const ProducteditWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px;
+  > div:first-child {
+    font-size: 50px;
+  }
+
+  button {
+    background-color: black;
+    color: white;
+    margin: 30px;
+    font-size: 30px;
+    padding: 5px 20px;
+
+    :last-of-type {
+      background: white;
+      color: black;
+    }
+  }
+`;
+
+export const ProducteditNav = styled.div`
+  font-size: 20px;
+
+  input {
+    padding: 20px;
+    font-size: 15px;
+    width: 900px;
+  }
+
+  input[type="file"] {
+    border: 1px solid black;
+  }
+
+  label {
+    color: black;
+  }
+  textarea {
+    padding: 20px;
+    font-size: 15px;
+    width: 900px;
+    height: 100px;
+  }
+
+  select {
+    padding: 20px;
+    font-size: 15px;
+    width: 900px;
+  }
+`;
