@@ -9,6 +9,14 @@ export const ProductaddWrapper = styled.div`
   > div:first-child {
     font-size: 50px;
   }
+
+  button {
+    background-color: black;
+    color: white;
+    margin: 30px;
+    font-size: 30px;
+    padding: 5px 20px;
+  }
 `;
 
 export const ProductaddNav = styled.div`

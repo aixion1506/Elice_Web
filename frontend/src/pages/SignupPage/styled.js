@@ -21,6 +21,14 @@ export const SignupForm = styled.form`
   width: 400px;
 `;
 
+export const InvalidMessage = styled.div`
+  font-size: 0.7rem;
+  position: absolute;
+  right: 0;
+  bottom: -20px;
+  color: red;
+`;
+
 export const GotoLogin = styled.div`
   text-align: center;
   margin-top: 10px;

@@ -4,6 +4,11 @@ class CategoryService {
   constructor(productModel, categoryModel) {
     this.productModel = productModel;
     this.categoryModel = categoryModel;
+    this.addCategory = this.addCategory.bind(this);
+    this.getCategories = this.getCategories.bind(this);
+    this.getCategory = this.getCategory.bind(this);
+    this.setCategory = this.setCategory.bind(this);
+    this.deleteCategory = this.deleteCategory.bind(this);
   }
 
   // 카테고리 추가
@@ -20,15 +25,31 @@ class CategoryService {
     return createdNewCategory;
   }
 
-  // 카테고리 목록 조회
+  // 전체 카테고리 목록 조회
   async getCategories() {
     const categories = await this.categoryModel.find({});
 
     if (!categories) {
-      throw new Error("어떤 카테고리도 존재하지 않습니다.");
+      return null;
     }
 
-    return categories;
+    const checkEmpty = await Promise.all(
+      categories.map(async category => {
+        const founded = await this.productModel.findOne({
+          categoryId: category.id,
+        });
+        if (!founded) {
+          return true;
+        }
+        return false;
+      }),
+    );
+
+    const result = categories.map((category, idx) => [
+      category,
+      checkEmpty[idx],
+    ]);
+    return result;
   }
 
   // 특정 카테고리 조회

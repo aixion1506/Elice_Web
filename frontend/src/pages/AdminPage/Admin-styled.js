@@ -1,46 +1,28 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 export const AdminWrapper = styled.div`
-  display: flex;
-  align-items: left;
-  justify-content: left;
-  height: 100vh;
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 100px;
 
   > div {
-    max-width: 1500px;
+    max-width: 1000px;
     display: flex;
     flex-wrap: wrap;
     align-items: left;
     justify-content: left;
   }
-
-  /* > div {
-    border: 1px solid black;
-    width: 300px;
-    height: 150px;
-    padding: 10px 20px;
-    box-sizing: border-box;
-  }
-
-  > div > div:first-child {
-    font-size: 40px;
-  }
-
-  > div > div:last-child {
-    font-size: 20px;
-  } */
 `;
 
 export const AdminNav = styled.div`
-  border: 1px solid white;
   padding: 60px 120px;
-  width: 300px;
-  margin: 50px;
-  text-align: center;
-
-  button {
-    font-size: 30px;
-    border: none;
-    background-color: white;
-  }
+  width: 1000px;
+  text-align: left;
+  height: 100%;
+  margin-left: 100px;
+  text-decoration: none;
+  font-size: 40px;
 `;

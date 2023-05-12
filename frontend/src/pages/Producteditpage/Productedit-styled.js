@@ -16,11 +16,6 @@ export const ProducteditWrapper = styled.div`
     margin: 30px;
     font-size: 30px;
     padding: 5px 20px;
-
-    :last-of-type {
-      background: white;
-      color: black;
-    }
   }
 `;
 

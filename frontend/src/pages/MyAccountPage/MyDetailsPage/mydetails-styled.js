@@ -19,7 +19,7 @@ export const TitleWrapper = styled.div`
   }
 `;
 
-export const DetailFormWrapper = styled.div`
+export const DetailFormWrapper = styled.form`
   flex-grow: 1;
   width: 600px;
   margin-right: 40px;
@@ -36,5 +36,25 @@ export const GotoSignout = styled.div`
 
   &:hover a {
     opacity: 0.5;
+  }
+`;
+
+export const CancelButton = styled.div`
+  background-color: #fff;
+  width: 100%;
+  height: 48px;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  a {
+    text-decoration: none;
+  }
+
+  &:hover {
+    opacity: 0.7;
   }
 `;

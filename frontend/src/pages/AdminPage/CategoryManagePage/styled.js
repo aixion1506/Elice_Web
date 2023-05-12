@@ -20,8 +20,6 @@ export const CategoryWrapper = styled.div`
   form {
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
-    /* align-items: center; */
     
     label:first-of-type {
       display: block;
@@ -38,32 +36,43 @@ export const CategoryWrapper = styled.div`
     }
 
     li:not(:last-of-type) {
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
 
     input {
       padding: 0 10px;
-      width: 80%;
+      width: 84%;
       box-sizing: border-box;
     }
 
     button {
-      margin-left: 2%;
-      width: 8%;
-      font-size: 18px;
+      margin-left: 1%;
+      min-width: 5%;
+      font-size: 14px;
       color: #fff;
       background-color: black;
       box-sizing: border-box;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
     input, button {
-      height: 50px;
+      height: 35px;
+    }
+
+    button:hover {
+      opacity: 0.7;
     }
 
     button:last-of-type {
       color: #000;
       background-color: #fff;
+    }
+
+    button:last-of-type:hover {
+      background-color: #000;
+      color: #fff;
+      opacity: 1;
     }
   }
 `;

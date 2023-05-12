@@ -10,7 +10,9 @@ productRouter.patch(
   isAdmin,
   productController.setProduct,
 );
+//
 productRouter.get("/products", productController.getProducts);
+//
 productRouter.get(
   "/products/category/:categoryId",
   productController.getProductsByCategory,

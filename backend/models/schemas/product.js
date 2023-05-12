@@ -31,20 +31,9 @@ const ProductSchema = new Schema({
     required: true,
     trim: true,
   },
-  // inventory: {
-  //   type: Number,
-  //   required: true,
-  //   default: 10,
-  //   min: 0,
-  // },
   inventory: {
     type: new Schema(
       {
-        sizeXS: {
-          type: Number,
-          required: true,
-          min: 0,
-        },
         sizeS: {
           type: Number,
           required: true,
@@ -65,6 +54,11 @@ const ProductSchema = new Schema({
           required: true,
           min: 0,
         },
+        size2XL: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
       },
       { _id: false },
     ),
@@ -75,10 +69,6 @@ const ProductSchema = new Schema({
     required: true,
     min: 0,
   },
-  // searchKeywords: {
-  //   type: [String],
-  //   required: true,
-  // },
 });
 
 export default ProductSchema;

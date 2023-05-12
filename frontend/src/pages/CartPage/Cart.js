@@ -1,42 +1,121 @@
-import React, {useState} from 'react';
-import {CartWrapper, CartList, PayInfo} from "./styled";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { CartWrapper, CartList, PayInfo } from "./styled";
 
-const Cart = () => {
-  const carts = [];
-  const [count, setCount] = useState(0);
+import CartView from "./CartView";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Button } from "react-bootstrap";
 
-  const increase = (e) => {
-    e.preventDefault();
-    setCount((current) => current += 1)
-  }
-  const decrease = (e) => {
-    e.preventDefault();
-    setCount((current) => current -= 1);
-  }
+const Cart = ({ count, setCount }) => {
+  const [price, setPrice] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [delivery, setDelivery] = useState(0);
+  const [cartList, setCartList] = useState([]);
+  const navigator = useNavigate();
 
-  for(let i = 0; i < 5; i++) {
-    const cart = (
-      <li>
-        <input type="checkbox" id="" />
-        <img
-          src="https://www.ganni.com/dw/image/v2/AAWT_PRD/on/demandware.static/-/Sites-ganni-master-catalogue/default/dw2194b9cd/images/images/packshots/K1829-554-1.jpg?sh=2000"
-          alt="Product"
-        />
-        <div>
-          <p>HAIR BAND</p>
-          <p>HAIR BAND LOGO METALLIC NEEDLEWORK_NAVY GOLD</p>
-          <p>₩280,000</p>
-          <div>
-            <button onClick={decrease}>-</button>
-            <span>{count}</span>
-            <button onClick={increase}>+</button>
-          </div> 
-        </div>
-        <p>DELETE</p>
-      </li>
-    );
-    carts.push(cart);
-  }
+  // 로컬스토리지의 cart 불러옴
+  useEffect(() => {
+    setCartList(JSON.parse(localStorage.getItem("cart")));
+  }, []);
+
+  // 장바구니 수량 버튼에 적용할 함수
+  const setQuantity = (type, _id, quantity) => { 
+    if (type === "plus") {
+      const found = cartList.filter((item) => item._id === _id)[0];
+      const size = found.size;
+      const idx = cartList.indexOf(found);
+      const cartItem = {
+        _id: found._id,
+        imageUrl: found.imageUrl,
+        title: found.title,
+        price: found.price,
+        manufacturer: found.manufacturer,
+        quantity: quantity,
+        size: size,
+      };
+
+      setCartList([
+        ...cartList.slice(0, idx),
+        cartItem,
+        ...cartList.slice(idx + 1),
+      ]);
+      localStorage.setItem(
+        "cart",
+        JSON.stringify([
+          ...cartList.slice(0, idx),
+          cartItem,
+          ...cartList.slice(idx + 1),
+        ])
+      );
+    } else {
+      if (quantity === 0) return;
+
+      // 장바구니에 있는 상품
+      const found = cartList.filter((item) => item._id === _id)[0];
+      const size = found.size;
+      cartList.length;
+      const idx = cartList.indexOf(found);
+      const cartItem = {
+        _id: found._id,
+        imageUrl: found.imageUrl,
+        title: found.title,
+        price: found.price,
+        manufacturer: found.manufacturer,
+        quantity: quantity,
+        size: size,
+      };
+
+      setCartList([
+        ...cartList.slice(0, idx),
+        cartItem,
+        ...cartList.slice(idx + 1),
+      ]);
+      localStorage.setItem(
+        "cart",
+        JSON.stringify([
+          ...cartList.slice(0, idx),
+          cartItem,
+          ...cartList.slice(idx + 1),
+        ])
+      );
+    }
+  };
+
+  // 총 가격
+  const getTotalPrice = () => {
+    return cartList.reduce((tot, el) => tot + el.price * el.quantity, 0);
+  };
+  // 상품 수
+  const getTotalCount = () => {
+    return cartList.reduce((tot, el) => tot + el.quantity, 0);
+  };
+
+  useEffect(() => {
+    cartList && setPrice(getTotalPrice());
+    cartList && setCount(getTotalCount());
+    cartList && setTotal(getTotalPrice());
+  }, [cartList]);
+
+  // 장바구니 부분삭제
+  const handleRemove = (index) => {
+    setCartList((current) => {
+      const newList = [...current];
+      newList.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(newList));
+      return newList;
+    });
+  };
+
+  // 장바구니 전체삭제
+  const handleRemoveAll = (index) => {
+    setCartList((current) => {
+      const newList = [];
+
+      localStorage.setItem("cart", JSON.stringify(newList));
+      return newList;
+    });
+  };
+
   return (
     <>
       <CartWrapper>
@@ -47,26 +126,62 @@ const Cart = () => {
         </div>
         <div>
           <CartList>
-            <form>
-              <input type="checkbox" id="allcheck" />
-              <label htmlFor="allcheck">ALL</label>
-              <ul>
-                {carts}
-              </ul>
-            </form>
+            <CartView
+              setQuantity={setQuantity}
+              onRemove={handleRemove}
+              cartList={cartList}
+              setCartList={setCartList}
+            />
           </CartList>
           <PayInfo>
             <div>
               <p>결제정보</p>
               <ul>
-                <li>상품수</li>
-                <li>상품 금액</li>
-                <li>배송비</li>
+                <li>총 상품개수 {Number(count).toLocaleString("ko-KR")} 개 </li>
               </ul>
-              <p>총 결제금액</p>
+              <p>
+                총 결제금액 {Number(total + delivery).toLocaleString("ko-KR")}{" "}
+                원
+              </p>
             </div>
-            <button>쇼핑백 비우기</button>
-            <button>주문 하기</button>
+
+            <button
+              className="btn btn-outline-primary mb-3"
+              onClick={handleRemoveAll}
+            >
+              쇼핑백 비우기
+            </button>
+              {/* <Link
+                to="/order"
+                state= {{
+                  count: '',
+                  total: '',
+                  product: '',
+                  productId: '',
+                  productSize: '',
+                }}
+              >
+                주문하기
+              </Link> */}
+              <button onClick={() => {
+                const token = localStorage.getItem("token");
+                try {
+                  if(token) {
+                    navigator('/order', {
+                      state: {
+                        count: 0,
+                        total: 0,
+                        product: '',
+                        productId: '',
+                        productSize: '',
+                      }
+                    })
+                  }
+                } catch(e) {
+                  alert("회원 전용 서비스입니다.");
+                  navigate("/login");
+                }
+              }}>주문하기</button>
           </PayInfo>
         </div>
       </CartWrapper>

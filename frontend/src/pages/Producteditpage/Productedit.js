@@ -77,13 +77,6 @@ const Main = () => {
           >
             수정
           </button>
-          <button
-            onClick={function handleClick() {
-              alert("해당 상품이 삭제되었습니다.");
-            }}
-          >
-            삭제
-          </button>
         </div>
       </ProducteditWrapper>
     </>

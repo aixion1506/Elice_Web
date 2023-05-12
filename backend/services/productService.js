@@ -1,20 +1,31 @@
-import { renderFile } from "pug";
 import { Product, Category } from "../models";
 
 class ProductService {
   constructor(productModel, categoryModel) {
     this.productModel = productModel;
     this.categoryModel = categoryModel;
+    this.addProduct = this.addProduct.bind(this);
+    this.setProduct = this.setProduct.bind(this);
+    this.getProducts = this.getProducts.bind(this);
+    this.getProductsByCategory = this.getProductsByCategory.bind(this);
+    this.getProduct = this.getProduct.bind(this);
+    this.deleteProduct = this.deleteProduct.bind(this);
   }
 
   // 상품 추가
   async addProduct(productInfo) {
-    const { title } = productInfo;
+    const { title, categoryId } = productInfo;
 
     // 상품 중복 확인
     const founded = await this.productModel.findOne({ title });
     if (founded) {
       throw new Error(`${title} 상품이 존재합니다.`);
+    }
+
+    // 없는 카테고리에 추가 불가능
+    const category = await this.categoryModel.findOne({ _id: categoryId });
+    if (!category) {
+      throw new Error(`상품을 추가하려는 카테고리가 없습니다.`);
     }
 
     // DB 저장
@@ -73,7 +84,12 @@ class ProductService {
 
   // 상품 전체 조회
   async getProducts() {
-    const products = await this.productModel.find({});
+    const products = await this.productModel.find({}).populate("categoryId");
+
+    if (!products) {
+      return null;
+    }
+
     return products;
   }
 
@@ -84,13 +100,17 @@ class ProductService {
     if (!category) {
       throw new Error(`해당 카테고리가 존재하지 않습니다.`);
     }
-    const products = await this.productModel.find({ categoryId: id });
+    const products = await this.productModel
+      .find({ categoryId: id })
+      .populate("categoryId");
     return products;
   }
 
   // 특정 상품 조회
   async getProduct(id) {
-    const product = await this.productModel.findOne({ _id: id });
+    const product = await this.productModel
+      .findOne({ _id: id })
+      .populate("categoryId");
     // 상품이 없다면
     if (!product) {
       throw new Error(`해당 상품이 존재하지 않습니다.`);

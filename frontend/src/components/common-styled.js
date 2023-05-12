@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 export const LayoutWrapper = styled.div`
   position: relative;
-  top: 100px;
-  left: 300px;
+  top: 60px;
+  left: 280px;
   width: calc(100% - 300px);
 `;
 
@@ -11,6 +11,7 @@ export const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 40px;
+  position: relative;
 
   label {
     font-size: 18px;
@@ -20,6 +21,8 @@ export const InputWrapper = styled.div`
   input {
     width: 100%;
     height: 48px;
+    padding-left: 10px;
+    font-size: 16px;
   }
 `;
 

@@ -3,6 +3,16 @@ import { validationResult } from "express-validator";
 import { productService } from "../services";
 
 class ProductController {
+  constructor(service) {
+    this.service = service;
+    this.addProduct = this.addProduct.bind(this);
+    this.setProduct = this.setProduct.bind(this);
+    this.getProducts = this.getProducts.bind(this);
+    this.getProductsByCategory = this.getProductsByCategory.bind(this);
+    this.getProduct = this.getProduct.bind(this);
+    this.deleteProduct = this.deleteProduct.bind(this);
+  }
+
   async addProduct(req, res, next) {
     try {
       if (is.emptyObject(req.body)) {
@@ -28,7 +38,7 @@ class ProductController {
         searchKeywords,
       } = req.body;
 
-      const newProduct = await productService.addProduct({
+      const newProduct = await this.service.addProduct({
         title,
         categoryId,
         manufacturer,
@@ -69,10 +79,9 @@ class ProductController {
         imageUrl,
         inventory,
         price,
-        // searchKeywords,
       } = req.body;
 
-      const result = await productService.setProduct(productId, {
+      const result = await this.service.setProduct(productId, {
         title,
         categoryId,
         manufacturer,
@@ -81,7 +90,6 @@ class ProductController {
         imageUrl,
         inventory,
         price,
-        // searchKeywords,
       });
 
       res.status(200).json(result);
@@ -92,7 +100,7 @@ class ProductController {
 
   async getProducts(req, res, next) {
     try {
-      const products = await productService.getProducts();
+      const products = await this.service.getProducts();
       res.status(200).json(products);
     } catch (err) {
       next(err);
@@ -102,7 +110,7 @@ class ProductController {
   async getProductsByCategory(req, res, next) {
     try {
       const { categoryId } = req.params;
-      const products = await productService.getProductsByCategory(categoryId);
+      const products = await this.service.getProductsByCategory(categoryId);
       res.status(200).json(products);
     } catch (err) {
       next(err);
@@ -112,7 +120,7 @@ class ProductController {
   async getProduct(req, res, next) {
     try {
       const { productId } = req.params;
-      const productData = await productService.getProduct(productId);
+      const productData = await this.service.getProduct(productId);
       res.status(200).json(productData);
     } catch (err) {
       next(err);
@@ -122,7 +130,7 @@ class ProductController {
   async deleteProduct(req, res, next) {
     try {
       const { productId } = req.params;
-      const result = await productService.deleteProduct(productId);
+      const result = await this.service.deleteProduct(productId);
       res.status(200).json(result);
     } catch (err) {
       next(err);
@@ -130,6 +138,6 @@ class ProductController {
   }
 }
 
-const productController = new ProductController();
+const productController = new ProductController(productService);
 
 export { productController };

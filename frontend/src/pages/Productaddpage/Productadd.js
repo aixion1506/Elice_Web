@@ -63,12 +63,21 @@ const Main = () => {
             <input type="text" placeholder="10000"></input>
           </p>
         </ProductaddNav>
-        <ProductaddNav>
+
+        {/* <ProductaddNav> 
           <p>검색 키워드</p>
           <p>
             <input type="text" placeholder="여자옷"></input>
           </p>
-        </ProductaddNav>
+        </ProductaddNav>*/}
+
+        <button
+          onClick={function handleClick() {
+            alert("해당 상품이 등록되었습니다.");
+          }}
+        >
+          등록
+        </button>
       </ProductaddWrapper>
     </>
   );

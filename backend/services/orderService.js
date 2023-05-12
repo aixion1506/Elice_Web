@@ -3,20 +3,20 @@ import { Order } from "../models";
 class OrderService {
   constructor(orderModel) {
     this.orderModel = orderModel;
+    this.addOrder = this.addOrder.bind(this);
+    this.getOrderAdmin = this.getOrderAdmin.bind(this);
+    this.getOrderUser = this.getOrderUser.bind(this);
+    this.setOrder = this.setOrder.bind(this);
+    this.deleteOrder = this.deleteOrder.bind(this);
   }
+
   async addOrder(orderInfo) {
-    const checkOverlap = await this.orderModel.findOne({
-      orderNumber: orderInfo.orderNumber,
-    });
-    if (checkOverlap) {
-      throw new Error("주문 번호가 중복되었습니다.");
-    }
     const createdNewOrder = await this.orderModel.create(orderInfo);
     return createdNewOrder;
   }
 
   async getOrderAdmin() {
-    const orderList = await this.orderModel.find();
+    const orderList = await this.orderModel.find().populate("userId");
     return orderList;
   }
 
