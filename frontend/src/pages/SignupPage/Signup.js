@@ -9,6 +9,11 @@ import { useUserDispatch } from "../../context/UserContext";
 import { ROUTE } from "../../routes/route";
 import { LayoutWrapper } from "../../components/common-styled";
 
+// firebase 라이브러리
+import { auth } from '../../firebase';
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+
 /**
  * 유효성검사
  * 비밀번호 8자 이상
@@ -32,6 +37,11 @@ const Signup = () => {
 
   const navigate = useNavigate();
   const dispatch = useUserDispatch();
+
+  // firbase 에러 처리
+  const [error, setError] = useState('')
+  // firebase 로딩
+  const [isLoading, setIsLoading] = useState(false)
 
   /** 유효성체크 메세지 */
   const InvalidMessages = {
@@ -68,40 +78,72 @@ const Signup = () => {
     }
   }, [password, passwordConfirm]);
 
-  /** 회원가입 API */
-  const signupAPI = async (userData) => {
-    // await post()
-    try {
-      const { data } = await API.post("/users/register", {
-        name,
-        email,
-        password,
-      });
-      navigate(ROUTE.HOME.link);
-      localStorage.setItem("token", data.token);
-      dispatch({
-        type: "LOGIN",
-        // isAdmin: data.isAdmin,
-      });
-    } catch (err) {
-      console.log("Error", err.response.data);
-      alert("이미 사용중인 이메일입니다.");
-    }
-  };
+  // /** 기존 localstorage 회원가입 API */
+  // const signupAPI = async (userData) => {
+  //   // await post()
+  //   try {
+  //     const { data } = await API.post("/users/register", {
+  //       name,
+  //       email,
+  //       password,
+  //     });
+  //     navigate(ROUTE.HOME.link);
+  //     localStorage.setItem("token", data.token);
+  //     dispatch({
+  //       type: "LOGIN",
+  //       // isAdmin: data.isAdmin,
+  //     });
+  //   } catch (err) {
+  //     console.log("Error", err.response.data);
+  //     alert("이미 사용중인 이메일입니다.");
+  //   }
+  // };
 
   /** 회원가입 제출 */
-  const signupSubmit = (e) => {
+  const signupSubmit = async (e) => {
     e.preventDefault();
 
-    if (!isNameValid) {
-      return nameRef.current.focus();
-    }
-    if (!isEmailValid) {
-      return emailRef.current.focus();
-    }
+    // 기존 회원가입 코드
+    // if (!isNameValid) {
+    //   return nameRef.current.focus();
+    // }
+    // if (!isEmailValid) {
+    //   return emailRef.current.focus();
+    // }
 
-    if (isNameValid && isEmailValid && isPwMatch) {
-      signupAPI();
+    // if (isNameValid && isEmailValid && isPwMatch) {
+    //   signupAPI();
+    // }
+
+    // firebase signup api
+    setError('') // 새로고침하면 초기화
+    // 1. 계정 생성
+    // 2. 유저 프로필 지정
+    // 3. 홈으로 리다이렉트
+    console.log(name, email, password)
+
+    if (isLoading || name === '' || email === ''|| password === '') return
+
+    try{
+      setIsLoading(true)
+      // createUserWithEmailAndPassword 함수
+      // 이 함수가 성공하면 유저의 자격 증명(credentials)을 받게 됨
+      // 또한 사용자는 바로 로그인 된다
+      // 이미 존재하는 유저거나 비번이 유효하지 않으면 실패함
+      const credentials = await createUserWithEmailAndPassword(auth,email,password)
+      console.log(credentials.user) //유저의 정보를 얻을 수 있다
+      await updateProfile(credentials.user, {
+        displayName: name
+      })
+      navigate('/')
+    } catch(e) {
+
+      if(e instanceof FirebaseError){
+        console.log(e.code, e.message)
+        setError(e.message)
+      }
+    } finally {
+      setIsLoading(false)
     }
   };
   return (
@@ -166,7 +208,7 @@ const Signup = () => {
             <InvalidMessage>{InvalidMessages.password}</InvalidMessage>
           )}
         </InputWrapper>
-        <Button>CREATE ACCOUNT</Button>
+        <Button>{isLoading ? 'Loading' : 'CREATE ACCOUNT'}</Button>
         <GotoLogin>
           <Link to="/login">Already have an account?</Link>
         </GotoLogin>
