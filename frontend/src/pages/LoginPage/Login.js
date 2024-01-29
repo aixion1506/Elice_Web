@@ -10,14 +10,24 @@ import { post } from "../../utils/api";
 
 import { useUserDispatch } from "../../context/UserContext";
 
+// firebase 로그인 인증
+import { auth } from '../../firebase';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const passwordRef = useRef();
   const navigate = useNavigate();
-
   const dispatch = useUserDispatch();
+
+  // firbase 에러 처리
+  const [error, setError] = useState('')
+  // firebase 로딩
+  const [isLoading, setIsLoading] = useState(false)
+  
 
   /** 로그인 API */
   const loginAPI = async (userData) => {
@@ -37,16 +47,40 @@ const Login = () => {
     }
   };
 
-  /** 로그인 제출 */
-  const loginSubmit = useCallback(
-    (e) => {
-      e.preventDefault();
-      loginAPI({ email, password });
-      setEmail("");
-      setPassword("");
-    },
-    [email, password]
-  );
+  // /** 기존 로그인 제출 */
+  // const loginSubmit = useCallback(
+  //   (e) => {
+  //     e.preventDefault();
+  //     // loginAPI({ email, password });
+  //     // setEmail("");
+  //     // setPassword("");
+  //   },
+  //   [email, password]
+  // );
+
+
+  // firebase Login api
+  const loginSubmit = async (e) => {
+    e.preventDefault();
+    setError('') // 새로고침하면 초기화
+
+    console.log('로그인 됐음!!!!!!!',email, password);
+    if (isLoading || email === ''|| password === '') return
+
+    try{
+      setIsLoading(true);
+      await (await signInWithEmailAndPassword(auth, email, password))
+      navigate('/');
+    } catch(e) {
+
+      if(e instanceof FirebaseError){
+        console.log(e.code, e.message)
+        setError(e.message)
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <>
